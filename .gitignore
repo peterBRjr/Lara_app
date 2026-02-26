@@ -45,3 +45,7 @@ app.*.map.json
 /android/app/release
 
 # Environment variables
+android/app/google-services.json
+ios/firebase_app_id_file.json
+ios/GoogleService-Info.plist
+lib/firebase_options.dart

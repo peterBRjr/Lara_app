@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to Chat
+                Navigator.pushNamed(context, '/chat');
               },
               child: const Text('Nova Conversa'),
             ),
