@@ -3,7 +3,14 @@ import '../entities/user_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<String, UserEntity>> signInWithGoogle();
-  Future<Either<String, UserEntity>> signInWithEmail(String email, String password);
+  Future<Either<String, UserEntity>> signInWithEmail(
+    String email,
+    String password,
+  );
+  Future<Either<String, UserEntity>> signUpWithEmail(
+    String email,
+    String password,
+  );
   Future<void> signOut();
   Future<Either<String, UserEntity>> checkAuthStatus();
 }

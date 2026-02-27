@@ -7,12 +7,14 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/dashboard/presentation/pages/home_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'features/chat_IA/data/datasources/chat_local_data_source.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await di.init();
+  await di.sl<ChatLocalDataSource>().init();
   runApp(const MyApp());
 }
 
@@ -49,21 +51,12 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
-        }
-      },
+    return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is Authenticated) {
           return const HomePage();
-        } else if (state is Unauthenticated) {
-          return LoginPage();
         }
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        return const LoginPage();
       },
     );
   }

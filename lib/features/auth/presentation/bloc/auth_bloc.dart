@@ -24,6 +24,16 @@ class SignInWithEmailEvent extends AuthEvent {
   List<Object> get props => [email, password];
 }
 
+class SignUpWithEmailEvent extends AuthEvent {
+  final String email;
+  final String password;
+
+  const SignUpWithEmailEvent(this.email, this.password);
+
+  @override
+  List<Object> get props => [email, password];
+}
+
 class SignOutEvent extends AuthEvent {}
 
 // States
@@ -57,19 +67,24 @@ class AuthError extends AuthState {
   List<Object> get props => [message];
 }
 
+class ResetAuthEvent extends AuthEvent {}
+
 // Bloc
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithGoogle signInWithGoogle;
   final SignInWithEmail signInWithEmail;
+  final SignUpWithEmail signUpWithEmail;
   final SignOut signOut;
   final CheckAuthStatus checkAuthStatus;
 
   AuthBloc({
     required this.signInWithGoogle,
     required this.signInWithEmail,
+    required this.signUpWithEmail,
     required this.signOut,
     required this.checkAuthStatus,
   }) : super(AuthInitial()) {
+    on<ResetAuthEvent>((event, emit) => emit(AuthInitial()));
     on<CheckAuthStatusEvent>((event, emit) async {
       emit(AuthLoading());
       final result = await checkAuthStatus();
@@ -91,6 +106,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignInWithEmailEvent>((event, emit) async {
       emit(AuthLoading());
       final result = await signInWithEmail(event.email, event.password);
+      result.fold(
+        (failure) => emit(AuthError(failure)),
+        (user) => emit(Authenticated(user)),
+      );
+    });
+
+    on<SignUpWithEmailEvent>((event, emit) async {
+      emit(AuthLoading());
+      final result = await signUpWithEmail(event.email, event.password);
       result.fold(
         (failure) => emit(AuthError(failure)),
         (user) => emit(Authenticated(user)),

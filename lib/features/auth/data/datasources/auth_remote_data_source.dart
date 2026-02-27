@@ -5,6 +5,7 @@ import '../models/user_model.dart';
 abstract class AuthRemoteDataSource {
   Future<UserModel> signInWithGoogle();
   Future<UserModel> signInWithEmail(String email, String password);
+  Future<UserModel> signUpWithEmail(String email, String password);
   Future<void> signOut();
   Future<UserModel?> getCurrentUser();
 }
@@ -42,6 +43,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       return UserModel.fromFirebaseUser(user);
+    } on FirebaseAuthException catch (e) {
+      throw Exception(_mapFirebaseError(e.code));
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -59,6 +62,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       return UserModel.fromFirebaseUser(user);
+    } on FirebaseAuthException catch (e) {
+      throw Exception(_mapFirebaseError(e.code));
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> signUpWithEmail(String email, String password) async {
+    try {
+      final UserCredential userCredential = await firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw Exception('Sign up failed');
+      }
+
+      return UserModel.fromFirebaseUser(user);
+    } on FirebaseAuthException catch (e) {
+      throw Exception(_mapFirebaseError(e.code));
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -77,5 +101,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return UserModel.fromFirebaseUser(user);
     }
     return null;
+  }
+
+  String _mapFirebaseError(String code) {
+    switch (code) {
+      case 'user-not-found':
+        return 'Usuário não encontrado. Verifique o email digitado.';
+      case 'wrong-password':
+        return 'Senha incorreta. Tente novamente.';
+      case 'invalid-email':
+        return 'O formato do email é inválido.';
+      case 'user-disabled':
+        return 'Esta conta de usuário foi desativada.';
+      case 'email-already-in-use':
+        return 'Este email já está sendo usado por outra conta.';
+      case 'weak-password':
+        return 'A senha é muito fraca. Escolha uma senha mais forte.';
+      case 'invalid-credential':
+        return 'Credenciais inválidas ou incorretas. Verifique seu email e senha.';
+      case 'account-exists-with-different-credential':
+        return 'Já existe uma conta associada a este email com outro método de login.';
+      default:
+        return 'Erro na autenticação ($code). Tente novamente mais tarde.';
+    }
   }
 }

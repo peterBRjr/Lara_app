@@ -22,6 +22,16 @@ class SignInWithEmail {
   }
 }
 
+class SignUpWithEmail {
+  final AuthRepository repository;
+
+  SignUpWithEmail(this.repository);
+
+  Future<Either<String, UserEntity>> call(String email, String password) async {
+    return await repository.signUpWithEmail(email, password);
+  }
+}
+
 class SignOut {
   final AuthRepository repository;
 

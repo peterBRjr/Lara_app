@@ -19,9 +19,25 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<String, UserEntity>> signInWithEmail(String email, String password) async {
+  Future<Either<String, UserEntity>> signInWithEmail(
+    String email,
+    String password,
+  ) async {
     try {
       final userModel = await remoteDataSource.signInWithEmail(email, password);
+      return Right(userModel);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, UserEntity>> signUpWithEmail(
+    String email,
+    String password,
+  ) async {
+    try {
+      final userModel = await remoteDataSource.signUpWithEmail(email, password);
       return Right(userModel);
     } catch (e) {
       return Left(e.toString());
@@ -43,7 +59,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Left('User not logged in');
       }
     } catch (e) {
-       return Left(e.toString());
+      return Left(e.toString());
     }
   }
 }

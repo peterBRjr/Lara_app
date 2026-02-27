@@ -6,6 +6,7 @@ import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/domain/repositories/auth_repository.dart';
 import 'features/auth/domain/usecases/auth_usecases.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/chat_IA/data/datasources/chat_local_data_source.dart';
 
 final sl = GetIt.instance;
 
@@ -16,6 +17,7 @@ Future<void> init() async {
     () => AuthBloc(
       signInWithGoogle: sl(),
       signInWithEmail: sl(),
+      signUpWithEmail: sl(),
       signOut: sl(),
       checkAuthStatus: sl(),
     ),
@@ -24,6 +26,7 @@ Future<void> init() async {
   // Use cases
   sl.registerLazySingleton(() => SignInWithGoogle(sl()));
   sl.registerLazySingleton(() => SignInWithEmail(sl()));
+  sl.registerLazySingleton(() => SignUpWithEmail(sl()));
   sl.registerLazySingleton(() => SignOut(sl()));
   sl.registerLazySingleton(() => CheckAuthStatus(sl()));
 
@@ -34,11 +37,9 @@ Future<void> init() async {
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(
-      firebaseAuth: sl(),
-      googleSignIn: sl(),
-    ),
+    () => AuthRemoteDataSourceImpl(firebaseAuth: sl(), googleSignIn: sl()),
   );
+  sl.registerLazySingleton<ChatLocalDataSource>(() => ChatLocalDataSource());
 
   // External
   sl.registerLazySingleton(() => FirebaseAuth.instance);
