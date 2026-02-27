@@ -136,6 +136,9 @@ class _HomePageState extends State<HomePage> {
                   itemCount: _conversations.length,
                   itemBuilder: (context, index) {
                     final convo = _conversations[index];
+                    final lastMsg = _localDb.getLastUserMessage(convo.id);
+                    final displayTitle = lastMsg?.text ?? convo.title;
+                    final displayTime = lastMsg?.timestamp ?? convo.updatedAt;
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       elevation: 4,
@@ -161,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         title: Text(
-                          convo.title,
+                          displayTitle,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -173,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
-                            'Última conversa: ${convo.updatedAt.day.toString().padLeft(2, '0')}/${convo.updatedAt.month.toString().padLeft(2, '0')} às ${convo.updatedAt.hour.toString().padLeft(2, '0')}:${convo.updatedAt.minute.toString().padLeft(2, '0')}',
+                            'Última mensagem: ${displayTime.day.toString().padLeft(2, '0')}/${displayTime.month.toString().padLeft(2, '0')} às ${displayTime.hour.toString().padLeft(2, '0')}:${displayTime.minute.toString().padLeft(2, '0')}',
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.grey.shade600,

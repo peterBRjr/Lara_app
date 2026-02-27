@@ -39,6 +39,15 @@ class ChatLocalDataSource {
     return messages;
   }
 
+  ChatMessageModel? getLastUserMessage(String conversationId) {
+    final messages = _messagesBox.values
+        .where((msg) => msg.conversationId == conversationId && msg.isUser)
+        .toList();
+    if (messages.isEmpty) return null;
+    messages.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return messages.first;
+  }
+
   Future<ChatConversation> startNewConversation(
     String initialText,
     String userId,

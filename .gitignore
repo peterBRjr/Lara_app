@@ -11,7 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-
+*.env
 # IntelliJ related
 *.iml
 *.ipr
@@ -32,13 +32,12 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
-
+.env
 # Symbolication related
 app.*.symbols
 
 # Obfuscation related
 app.*.map.json
-
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
@@ -49,4 +48,3 @@ android/app/google-services.json
 ios/firebase_app_id_file.json
 ios/GoogleService-Info.plist
 lib/firebase_options.dart
-.env
